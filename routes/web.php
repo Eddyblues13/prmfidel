@@ -32,6 +32,9 @@ Route::get('/contact', function () {
     return view('home.contact');
 });
 
+Route::get('/faq', function () {
+    return view('home.faq');
+});
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login.page');
@@ -50,10 +53,10 @@ Route::get('forgot-password', [App\Http\Controllers\Auth\ForgotPasswordControlle
     ->name('password.request');
 
 Route::post('forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])
-    ->name('password.email'); 
+    ->name('password.email');
 
 Route::get('reset-password/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetBladefile'])
-    ->name('password.reset'); 
+    ->name('password.reset');
 
 Route::post('reset-password', [App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])
     ->name('password.update');
@@ -148,9 +151,10 @@ Route::post('admin/login', [AdminLoginController::class, 'login'])->name('login.
 
 
 
+
 // Admin Routes
 Route::prefix('admin')->group(function () {
-    Route::post('logout', [AdminLoginController::class, 'logout'])->name('logout');
+    Route::post('logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
     // Protecting admin routes using the 'admin' middleware
     Route::middleware(['admin'])->group(function () { // Admin Profile Routes
@@ -289,5 +293,6 @@ Route::prefix('admin')->group(function () {
         Route::resource('plans', PlanController::class);
         // Wallet resource routes
         Route::resource('wallets', WalletDetailController::class);
+        Route::post('/admin/change-password', [AdminLoginController::class, 'changePassword'])->name('admin.change.password');
     });
 });

@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="ialsmxvxbFVMvehWybzdppDZtGxGJ4kODeqmi07p">
-    <title>S9trading Network | User Dashboard</title>
+    <title>Prime Fidel Options | User Dashboard</title>
     <link rel="icon" href="{{asset('user/account/storage/app/public/photos/uPYDzhfavicon.png1677339254')}}"
         type="image/png" />
     <link rel="icon" href="{{ asset('account/cloud/uploads/favicon.png')}}" type="image/png" />
@@ -102,8 +102,116 @@
         <!--/PayPal-->
 
         <!--Start of Tawk.to Script-->
-        <script type="text/javascript">
-            {tawk to codess}
+        <script>
+            $(document).ready(function() {
+                // Password strength indicator
+                $('#new_password').on('input', function() {
+                    var password = $(this).val();
+                    var strength = 0;
+                    
+                    // Check password requirements
+                    var hasLength = password.length >= 8;
+                    var hasUpper = /[A-Z]/.test(password);
+                    var hasLower = /[a-z]/.test(password);
+                    var hasNumber = /[0-9]/.test(password);
+                    var hasSpecial = /[^A-Za-z0-9]/.test(password);
+                    
+                    // Calculate strength
+                    if (hasLength) strength++;
+                    if (hasUpper) strength++;
+                    if (hasLower) strength++;
+                    if (hasNumber) strength++;
+                    if (hasSpecial) strength++;
+                    
+                    // Update strength meter
+                    var meter = $('#password-strength-meter');
+                    meter.removeClass('strength-weak strength-medium strength-strong');
+                    
+                    if (strength <= 2) {
+                        meter.addClass('strength-weak');
+                    } else if (strength <= 4) {
+                        meter.addClass('strength-medium');
+                    } else {
+                        meter.addClass('strength-strong');
+                    }
+                });
+                
+                // Handle password change form submission
+                $('#changePasswordForm').on('submit', function(e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    var submitBtn = $('#submitBtn');
+                    
+                    // Clear previous errors
+                    $('.error-message').text('');
+                    
+                    // Disable submit button
+                    submitBtn.prop('disabled', true);
+                    submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Processing...');
+                    
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: 'POST',
+                        data: form.serialize(),
+                        success: function(response) {
+                            if (response.success) {
+                                // Show success message
+                                $.notify({
+                                    icon: 'fas fa-check-circle',
+                                    title: 'Success!',
+                                    message: response.message,
+                                    url: ''
+                                },{
+                                    type: 'success',
+                                    placement: {
+                                        from: "top",
+                                        align: "right"
+                                    },
+                                    time: 3000,
+                                });
+                                
+                                // Close modal and reset form
+                                $('#changePasswordModal').modal('hide');
+                                form[0].reset();
+                                $('#password-strength-meter').removeClass('strength-weak strength-medium strength-strong');
+                            }
+                        },
+                        error: function(xhr) {
+                            var errors = xhr.responseJSON.errors;
+                            if (errors) {
+                                $.each(errors, function(key, value) {
+                                    $('#' + key + '_error').text(value[0]);
+                                });
+                            } else {
+                                $.notify({
+                                    icon: 'fas fa-exclamation-triangle',
+                                    title: 'Error!',
+                                    message: 'An unexpected error occurred. Please try again.',
+                                    url: ''
+                                },{
+                                    type: 'danger',
+                                    placement: {
+                                        from: "top",
+                                        align: "right"
+                                    },
+                                    time: 3000,
+                                });
+                            }
+                        },
+                        complete: function() {
+                            submitBtn.prop('disabled', false);
+                            submitBtn.text('Change Password');
+                        }
+                    });
+                });
+                
+                // Reset form when modal is closed
+                $('#changePasswordModal').on('hidden.bs.modal', function () {
+                    $('#changePasswordForm')[0].reset();
+                    $('.error-message').text('');
+                    $('#password-strength-meter').removeClass('strength-weak strength-medium strength-strong');
+                });
+            });
         </script>
         <!--End of Tawk.to Script-->
         <div class="wrapper">
@@ -111,7 +219,7 @@
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
                     <a href="{{route('admin.home')}}" class="logo" style="font-size: 27px; color:#fff;">
-                        VPS
+                        PRIME
                     </a>
                     <button class="ml-auto navbar-toggler sidenav-toggler" type="button" data-toggle="collapse"
                         data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -174,14 +282,15 @@
                                             <a class="dropdown-item" href="#">Account Settings</a>
                                             <a class="dropdown-item" href="#">Change Password</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="{{route('logout')}}">
+                                            <a class="dropdown-item" href="{{ route('admin.logout') }}"
+                                                onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
                                                 Logout
                                             </a>
-                                            <form id="logoutform" action="{{route('logout')}}" method="POST"
+                                            <form id="logoutform" action="{{ route('admin.logout') }}" method="POST"
                                                 style="display: none;">
-                                                <input type="hidden" name="_token"
-                                                    value="XJqa5hhY3cHbkWs5f3RwEgAuiPZvVNy9oH1FuvnJ">
+                                                @csrf
                                             </form>
+
                                         </li>
                                     </div>
                                 </ul>
@@ -278,7 +387,7 @@
                                     <p>Manage Withdrawal</p>
                                 </a>
                             </li>
-                            
+
                             <li class="nav-item">
                                 <a href="{{ route('wallets.index') }}">
                                     <i class="fa fa-cog" aria-hidden="true"></i>

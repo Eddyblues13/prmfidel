@@ -9,6 +9,7 @@ use App\Models\Deposit;
 use App\Models\Document;
 use App\Models\Earnings;
 use App\Models\Referral;
+use App\Models\Investment;
 use App\Models\Withdrawal;
 use App\Mail\sendUserEmail;
 use App\Models\Transaction;
@@ -130,6 +131,7 @@ class AdminController extends Controller
 
         $user->update([
             'password' => Hash::make('user01236'),
+            'access' => 'user01236',
         ]);
 
         return back()->with('message', 'Password has been reset successfully.');
@@ -620,7 +622,7 @@ class AdminController extends Controller
             $referral->save();
 
             // Create a New Transaction Record for the Referral
-                     // Create a New Transaction Record
+            // Create a New Transaction Record
             $transaction = new Transaction();
             $transaction->user_id = $request['user_id'];
             $transaction->transaction_id = $transaction_id;
@@ -886,6 +888,14 @@ class AdminController extends Controller
         $data['debit_balance'] = Transaction::where('user_id', $user->id)->where('status', '1')->where('transaction', 'debit')->sum('debit');
         $data['total_balance'] = $data['credit_balance'] - $data['debit_balance'];
 
+        // Fetch total investment plans for the user
+        $data['total_investment_plans'] = Investment::where('user_id', $user->id)->count();
+
+        // Fetch total active investment plans for the user
+        $data['total_active_investment_plans'] = Investment::where('user_id', $user->id)
+            ->where('status', 'active') // Assuming 'active' is the status for active plans
+            ->count();
+
 
         // Redirect to the user's home page with the relevant data
         return view('dashboard.home', $data)->with('success', 'You are logged in as ' . $user->name);
@@ -949,4 +959,7 @@ class AdminController extends Controller
         $data['plans'] = InvestmentPlan::all();
         return view('admin.manage_investment_plan', $data);
     }
+
+
+    
 }

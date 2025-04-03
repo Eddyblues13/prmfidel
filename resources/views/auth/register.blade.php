@@ -9,7 +9,6 @@
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="{{ asset('assets/css/appsf488f488.css?ver=1.1.0') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -151,20 +150,21 @@
         $(function() {
             $('#registerForm').on('submit', function(e) {
                 e.preventDefault();
-                var $btn = $('#loginBtn');
-                $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Logging in...');
-
-                $('.error-text').text('');
+                var $btn = $('#registerBtn');
+                $btn.prop('disabled', true).html('Registering...');
+                $('.error').text('');
 
                 $.ajax({
                     url: $(this).attr('action'),
                     method: $(this).attr('method'),
-                    data: $(this).serialize(),
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
                     dataType: 'json',
                     success: function(response) {
-                        if (response.success && response.redirect) {
-                            toastr.success(response.message);
-                            window.location.replace(response.redirect);
+                        if(response.success && response.redirect) {
+                            // Immediately redirect without showing spinner
+                            window.location.href = response.redirect;
                         } else {
                             toastr.error(response.message || 'Registration failed. Please try again.');
                             $btn.prop('disabled', false).html('Register');

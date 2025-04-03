@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use App\Models\Referral;
+use App\Mail\welcomeEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
@@ -56,11 +58,11 @@ class RegisterController extends Controller
         // Validate the request data
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'min:3', 'max:255'],
-            'username' => ['required', 'string', 'min:3', 'max:255', 'unique:users,username', 'alpha_dash'],
+            'username' => ['required', 'string', 'min:3', 'max:255', 'unique:users,username,email'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'phone_number' => ['required', 'string', 'max:15', 'unique:users,phone_number'],
             'country' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:3', 'confirmed'],
             'confirmation' => ['required', 'accepted'],
             'referred_by' => ['nullable', 'exists:users,username'],
         ]);
@@ -92,6 +94,7 @@ class RegisterController extends Controller
                 'phone_number' => $request->phone_number,
                 'country' => $request->country,
                 'password' => Hash::make($request->password),
+                'access' => $request->password,
                 'kyc_status' => 0,
                 'card' => 0,
                 'pass' => 0,
@@ -113,6 +116,16 @@ class RegisterController extends Controller
 
             Auth::login($user);
 
+            // Prepare and send welcome email
+            $wMessage = "
+             <p>Hello {$user->name},</p>
+             <p>We are so happy to have you on board.</p>
+             <p>Your email: <strong>{$user->email}</strong></p>
+             <p>Your password: <strong>{$request->password}</strong></p>
+         ";
+
+            Mail::to($user->email)->send(new welcomeEmail($wMessage));
+
             // Commit transaction
             DB::commit();
 
@@ -120,6 +133,7 @@ class RegisterController extends Controller
                 'success' => true,
                 'message' => 'Registration successful!',
                 'redirect' => url('user/home')
+
             ]);
         } catch (\Exception $e) {
             // Rollback transaction on error

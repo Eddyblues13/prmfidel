@@ -25,7 +25,7 @@ class ForgotPasswordController extends Controller
      */
     public function sendResetLinkEmail(Request $request): RedirectResponse
     {
-        $request->validate(['email' => 'required|email']);
+        $request->validate(['email' => 'required|email|exists:users,email']);
 
         // We will send the password reset link to this user
         $status = Password::sendResetLink(

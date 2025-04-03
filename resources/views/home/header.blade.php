@@ -1,8 +1,5 @@
 <!doctype html>
 <html lang="en">
-
-<!-- Mirrored from primefideloptions.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 28 Dec 2021 09:04:30 GMT -->
-<!-- Added by HTTrack -->
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
 
 <head>

@@ -310,14 +310,14 @@
                             <li class="nav-item  ">
                                 <a data-toggle="collapse" href="#mpack">
                                     <i class="fas fa-cubes"></i>
-                                    <p>Purchase Contract</p>
+                                    <p>Invest</p>
                                     <span class="caret"></span>
                                 </a>
                                 <div class="collapse" id="mpack">
                                     <ul class="nav nav-collapse">
                                         <li>
                                             <a href="{{route('user.buy.plan')}}">
-                                                <span class="sub-item">Subscribe to a Plan</span>
+                                                <span class="sub-item">Investment Plans</span>
                                             </a>
                                         </li>
                                         <li>

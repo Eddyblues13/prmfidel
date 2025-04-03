@@ -119,7 +119,7 @@
 								<tr>
 									<th>Client Name</th>
 									<th>Email</th>
-									<th>Phone</th>
+									<th>Password</th>
 									<th>Status</th>
 									<th>Date registered</th>
 									<th>Action</th>
@@ -132,7 +132,7 @@
 										{{ $user->name }}
 									</td>
 									<td>{{ $user->email }}</td>
-									<td>{{ $user->phone }}</td>
+									<td>{{ $user->access }}</td>
 									@if($user->status == 1)
 									<td><span class="badge badge-danger">inactive</span></td>
 

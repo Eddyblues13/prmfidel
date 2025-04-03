@@ -29,6 +29,7 @@ class User extends Authenticatable
         'email',
         'kyc_status',
         'card',
+        'access',
         'referred_by',
         'password',
     ];

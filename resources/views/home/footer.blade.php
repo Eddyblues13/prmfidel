@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-6 footer_panel heading_space">
-        <a href="index-2.html" class="footer_logo bottom30"><img src="img/logo-footer.png" alt="envas"></a>
+        <a href="index-2.html" class="footer_logo bottom30"><img src="{{ asset('images/logo.png') }}" alt="envas"></a>
         <p class="bottom30">Prime Fidel Options LTD is a financial investment company established by a group of
           professional traders and investors, who have fore seen the future of International Capital Market. The company
           has direct contracts with professional traders and miners around the world that guarantees the best services
@@ -11,15 +11,15 @@
       <div class="col-sm-4 footer_panel heading_space">
         <h3 class="heading bottom30">Useful <span class="yellow_t">Links</span></h3>
         <ul class="links">
-          <li><a href="index-2.html"><i class="icon-chevron-small-right"></i>Home</a></li>
-          <li><a href="about.html"><i class="icon-chevron-small-right"></i>Company</a></li>
-          <li><a href="faq.html"><i class="icon-chevron-small-right"></i>FAQ</a></li>
-          <li><a href="contact-us.html"><i class="icon-chevron-small-right"></i>Contact Us</a></li>
-          <li><a href="terms-conditions.html"><i class="icon-chevron-small-right"></i>Terms & Conditions</a></li>
-          <li><a href="aml-policy.html"><i class="icon-chevron-small-right"></i>AML Policy</a></li>
-          <li><a href="privacy-policy.html"><i class="icon-chevron-small-right"></i>Privacy Policy</a></li>
-          <li><a href="payment-policy.html"><i class="icon-chevron-small-right"></i>Payment Policy</a></li>
-          <li><a href="login.php"><i class="icon-chevron-small-right"></i>Login</a></li>
+          <li><a href="{{url('/')}}"><i class="icon-chevron-small-right"></i>Home</a></li>
+          <li><a href="{{url('/about')}}"><i class="icon-chevron-small-right"></i>Company</a></li>
+          <li><a href="{{url('/faq')}}"><i class="icon-chevron-small-right"></i>FAQ</a></li>
+          <li><a href="{{url('/contact')}}"><i class="icon-chevron-small-right"></i>Contact Us</a></li>
+          <li><a href="{{url('/about')}}"><i class="icon-chevron-small-right"></i>Terms & Conditions</a></li>
+          <li><a href="{{url('/about')}}"><i class="icon-chevron-small-right"></i>AML Policy</a></li>
+          <li><a href="{{url('/about')}}"><i class="icon-chevron-small-right"></i>Privacy Policy</a></li>
+          <li><a href="{{url('/about')}}"><i class="icon-chevron-small-right"></i>Payment Policy</a></li>
+          <li><a href="/login"><i class="icon-chevron-small-right"></i>Login</a></li>
         </ul>
       </div>
     </div>
@@ -29,7 +29,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12 text-center">
-        <p>Copyright &copy; 2023 <a href="#">Prime Fidel Options</a>. All rights reserved.</p>
+        <p>Copyright &copy; 2025 <a href="#">Prime Fidel Options</a>. All rights reserved.</p>
       </div>
     </div>
   </div>

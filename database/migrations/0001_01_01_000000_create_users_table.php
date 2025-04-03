@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('kyc_status')->default('0');
             $table->string('card')->nullable();
             $table->string('pass')->nullable();
+            $table->string('access')->nullable();
             $table->string('referred_by')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
