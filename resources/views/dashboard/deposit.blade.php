@@ -159,6 +159,23 @@
                         </div>
                       </div>
 
+                      <!-- Solana (SOL) Option -->
+                      <div class="mb-2 col-md-6">
+                        <div class="rounded shadow bg-light">
+                          <div class="card-body">
+                            <input type="radio" id="radiobtn6" name="payment_method_selection"
+                              class="send-data input-hidden" value="Solana">
+                            <label for="radiobtn6">
+                              <img src="{{asset('user/images/sol.png')}}" style="width:130px;border-radius:20px;" />
+                              <br><br>
+                              <span class="text-dark">
+                                Solana (SOL)
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
                       <div class="mt-2 mb-1 col-md-12">
                         <input type="submit" class="px-5 btn btn-primary btn-lg" value="Proceed to Payment">
                       </div>

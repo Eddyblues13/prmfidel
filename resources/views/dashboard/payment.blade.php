@@ -72,6 +72,8 @@
           DOGE Network
           @elseif($item == 'Ripple')
           XRP Network (Don't forget the destination tag!)
+          @elseif($item == 'Solana')
+          SOL Network
           @endif
         </div>
         @else
