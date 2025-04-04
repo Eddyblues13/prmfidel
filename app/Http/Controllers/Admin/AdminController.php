@@ -713,18 +713,39 @@ class AdminController extends Controller
 
 
         if ($type === 'Withdrawal') {
-            $creditDebit = new Withdrawal;
+            // Validate required fields
+            $validated = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'amount' => 'required|numeric|min:0.01',
+                // Make wallet_address and withdrawal_method optional
+            ]);
 
-            if ($transactionType === 'Credit') {
-                $creditDebit->user_id = $request['user_id'];
-                $creditDebit->amount = $request['amount'];
-            } elseif ($transactionType === 'Debit') {
-                $creditDebit->user_id = $request['user_id'];
-                $creditDebit->amount = -$request['amount'];
-            }
-            $creditDebit->save();
+            // Generate a unique transaction ID
+            $transaction_id = strtoupper(uniqid('TXN'));
 
-            return back()->with('message', 'Withdrawal Updated Successfully');
+            // Create new Withdrawal record with null checks
+            $withdrawal = new Withdrawal();
+            $withdrawal->user_id = $validated['user_id'];
+            $withdrawal->transaction_id = $transaction_id;
+            $withdrawal->amount = $validated['amount'];
+            $withdrawal->wallet_address = $request->wallet_address ?? "uuuiooooii";
+            $withdrawal->withdrawal_method = $request->withdrawal_method ?? 'crypto';
+            $withdrawal->status = 1; // Default status
+            $withdrawal->save();
+
+            // Create corresponding Transaction record
+            $transaction = new Transaction();
+            $transaction->user_id = $validated['user_id'];
+            $transaction->transaction_id = $transaction_id;
+            $transaction->transaction_type = "Withdrawal";
+            $transaction->transaction = ($transactionType === 'Credit') ? "credit" : "debit";
+            $transaction->credit = ($transactionType === 'Credit') ? $request['amount'] : 0;
+            $transaction->debit = ($transactionType === 'Debit') ? $request['amount'] : 0;
+            $transaction->status = 1; // Assuming '1' means completed
+            $transaction->save();
+
+
+            return back()->with('success', 'Withdrawal request submitted successfully');
         }
 
 
@@ -959,7 +980,4 @@ class AdminController extends Controller
         $data['plans'] = InvestmentPlan::all();
         return view('admin.manage_investment_plan', $data);
     }
-
-
-    
 }

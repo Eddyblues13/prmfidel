@@ -14,6 +14,7 @@ use App\Models\Referral;
 use App\Models\Transfer;
 use App\Models\Investment;
 use App\Models\Withdrawal;
+use App\Mail\SupportTicket;
 use App\Models\TradingPlan;
 use App\Models\Transaction;
 use App\Models\TradeHistory;
@@ -82,11 +83,11 @@ class HomeController extends Controller
         $data['credit_balance'] = Transaction::where('user_id', Auth::user()->id)->where('status', '1')->where('transaction', 'credit')->sum('credit');
         $data['debit_balance'] = Transaction::where('user_id', Auth::user()->id)->where('status', '1')->where('transaction', 'debit')->sum('debit');
         $data['total_balance'] = $data['credit_balance'] - $data['debit_balance'];
-        
-            // Fetch total investment plans for the user
+
+        // Fetch total investment plans for the user
         $data['total_investment_plans'] = Investment::where('user_id', Auth::user()->id)->count();
-        
-         // Fetch total active investment plans for the user
+
+        // Fetch total active investment plans for the user
         $data['total_active_investment_plans'] = Investment::where('user_id', Auth::user()->id)
             ->where('status', 'active') // Assuming 'active' is the status for active plans
             ->count();
@@ -609,6 +610,33 @@ class HomeController extends Controller
         $kyc->pass =  $filename_passport;
         $kyc->save();
         return redirect('user/ver-account')->with('status', 'Document updated successfully, please wait for approval');
+    }
+
+
+
+
+    public function sendSupportEmail(Request $request)
+    {
+        $request->validate([
+            'message' => 'required|string|min:1|max:2000',
+        ]);
+
+        try {
+            $user = Auth::user();
+            $data = [
+                'name' => $user->name,
+                'email' => $user->email,
+                'message' => $request->message,
+                'subject' => 'New Support Ticket from ' . $user->name
+            ];
+
+            // Send email to support
+            Mail::to('support@primefideloptions.com')->send(new SupportTicket($data));
+
+            return back()->with('success', 'Your support ticket has been submitted successfully! We will respond shortly.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to submit your support ticket. Please try again later.');
+        }
     }
 
 

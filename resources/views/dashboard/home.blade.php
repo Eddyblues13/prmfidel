@@ -3,7 +3,18 @@
     <div class="content bg-light">
         <div class="page-inner">
             <div class="mt-2 mb-4">
-                <h2 class="text-dark pb-2">Welcome, {{Auth::user()->name}}</h2>
+                <h2 class="text-dark pb-2 mb-3">Welcome, {{ Auth::user()->name }}</h2>
+
+                @if(Auth::user()->kyc_status == 1)
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-success rounded-pill text-white p-2 shadow-sm"
+                        style="background: linear-gradient(135deg, #28a745 0%, #218838 100%);">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span class="fw-medium">Verified Account</span>
+                    </span>
+                    <small class="text-muted ms-1">Your identity is confirmed</small>
+                </div>
+                @endif
                 <h5 id="ann" class="text-darkop-7 mb-4">Welcome to your Prime Fidel Options dashboard, control and
                     monitor
                     your

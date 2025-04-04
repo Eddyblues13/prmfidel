@@ -178,6 +178,7 @@
                                 <option value="Deposit">Deposit</option>
                                 <option value="Earning">Earning</option>
                                 <option value="Profit">Profit</option>
+                                <option value="Withdrawal">Withdrawal</option>
                                 <option value="Referral">Ref_Bonus</option>
                             </select>
                         </div>
@@ -189,6 +190,7 @@
                                 <option value="Debit">Debit</option>
                             </select>
                             <small> <b>NOTE:</b> You cannot debit deposit</small>
+                            <small> <b>NOTE:</b> You cannot credit withdrawal</small>
                         </div>
                         <div class="form-group">
                             <input type="submit" class="btn btn-light" value="Submit">

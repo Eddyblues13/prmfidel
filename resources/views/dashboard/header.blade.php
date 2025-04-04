@@ -184,11 +184,16 @@
                                     </div>
                                     <div class="quick-actions-scroll scrollbar-outer">
                                         <div class="quick-actions-items">
+                                            @if(Auth::user()->kyc_status == 1)
+                                            <div class="m-0 row">
+                                                <span class="text-success">KYC Verified</span>
+                                            </div>
+                                            @else
                                             <div class="m-0 row">
                                                 <a href="{{route('user.verify.account')}}"
-                                                    class="btn btn-success">Verify
-                                                    Account </a>
+                                                    class="btn btn-success">Verify Account</a>
                                             </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -314,7 +319,7 @@
                                 </a>
                             </li>
                             <li class="nav-item ">
-                                <a href="{{route('user.account.history')}}">
+                                <a href="{{route('user.asset.balance')}}">
                                     <i class="fa fa-coins" aria-hidden="true"></i>
                                     <p>Crypto Exchange</p>
                                 </a>

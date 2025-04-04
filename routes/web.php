@@ -110,7 +110,7 @@ Route::prefix('user')->middleware('user')->group(function () {
 
     Route::get('/dashboard', [HomeController::class, 'dashboard']);
     Route::get('/deposit', [HomeController::class, 'userDeposit'])->name('user.deposit');
-    Route::get('/asset-balance', [HomeController::class, 'assetBalance'])->name('user.asset.balance');;
+    Route::get('/asset-balance', [HomeController::class, 'assetBalance'])->name('user.asset.balance');
     Route::post('/get-deposit', [HomeController::class, 'getDeposit'])->name('get.deposit');
     Route::post('/make-deposit', [HomeController::class, 'makeDeposit'])->name('make.deposit');
     Route::post('/withdraw-funds', [HomeController::class, 'getWithdrawal'])->name('user.withdraw');
@@ -133,7 +133,7 @@ Route::prefix('user')->middleware('user')->group(function () {
     Route::post('/change-password', [HomeController::class, 'updatePassword'])->name('update-password');
     Route::post('/profile-update', [HomeController::class, 'profileUpdate'])->name('user.profile.update');
     Route::post('/update-wallet', [HomeController::class, 'updateWallet'])->name('user.update.wallet');
-    Route::post('/support-email', [HomeController::class, 'supportEmail']);
+    Route::post('/support', [HomeController::class, 'sendSupportEmail'])->name('sendSupportEmail');
     Route::post('/buy-plan', [HomeController::class, 'buyPlans'])->name('buy.plan');
     Route::get('/investments', [HomeController::class, 'makeInvestment'])->name('user.investments');
     Route::post('/trading', [HomeController::class, 'Trading']);

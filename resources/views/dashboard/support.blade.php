@@ -7,11 +7,41 @@
 				{{ session('status') }}
 			</div>
 			@endif
-			@if($message = Session::get('success'))
+
+			@if ($message = Session::get('success'))
 			<div class="alert alert-success">
-				<p>{{$message}}</p>
+				<p>{{ $message }}</p>
 			</div>
 			@endif
+
+			@if ($message = Session::get('error'))
+			<div class="alert alert-danger">
+				<p>{{ $message }}</p>
+			</div>
+			@endif
+
+			@if ($message = Session::get('warning'))
+			<div class="alert alert-warning">
+				<p>{{ $message }}</p>
+			</div>
+			@endif
+
+			@if ($message = Session::get('info'))
+			<div class="alert alert-info">
+				<p>{{ $message }}</p>
+			</div>
+			@endif
+
+			@if ($errors->any())
+			<div class="alert alert-danger">
+				<ul>
+					@foreach ($errors->all() as $error)
+					<li>{{ $error }}</li>
+					@endforeach
+				</ul>
+			</div>
+			@endif
+
 			<div class="mb-5 row p-md-3">
 				<div class="shadow col-12 p-md-2">
 					<div class="col-12 text-center bg-light p-3">
@@ -24,7 +54,7 @@
 						</div>
 					</div>
 					<div class="pb-5 col-md-8 offset-md-2">
-						<form method="post" action="{{url('/support-email')}}">
+						<form method="post" action="{{route('sendSupportEmail')}}">
 							@csrf
 							<div class="form-group">
 								<input type="hidden" name="name" value="{{Auth::user()->name}}" />
