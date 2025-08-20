@@ -23,7 +23,7 @@
         </p>
 
         @php
-        $wallet = \App\Models\WalletDetail::where('type', $item)->first();
+        $wallet = \App\Models\WalletDetail::where('network', $item)->first();
         @endphp
 
         @if($wallet)
