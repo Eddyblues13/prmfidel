@@ -50,7 +50,7 @@
                             government approved document).</h5>
                         <input type="file" class="form-control   bg-light  text-dark" name="card" required><br>
                         <h5 class="text-dark">Selfie Photo</h5>
-                        <input type="file" class="form-control   bg-light  text-dark" name="pass" required><br>
+                        <input type="file" class="form-control   bg-light  text-dark" name="passsssss" required><br>
                         <input type="submit" class="btn btn-dark" value="Submit documents">
                     </form>
                 </div>
