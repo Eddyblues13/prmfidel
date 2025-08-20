@@ -130,7 +130,7 @@
                         <div class="rounded shadow bg-light">
                           <div class="card-body">
                             <input type="radio" id="radiobtn4" name="payment_method_selection"
-                              class="send-data input-hidden" value="XRP">
+                              class="send-data input-hidden" value="Ripple">
                             <label for="radiobtn4">
                               <img src="{{asset('user/images/xrp.png')}}" style="width:130px;border-radius:20px;" />
                               <br><br>
@@ -147,7 +147,7 @@
                         <div class="rounded shadow bg-light">
                           <div class="card-body">
                             <input type="radio" id="radiobtn5" name="payment_method_selection"
-                              class="send-data input-hidden" value="USDT(Trc20)">
+                              class="send-data input-hidden" value="TRC20">
                             <label for="radiobtn5">
                               <img src="{{asset('user/images/usdt.png')}}" style="width:130px;border-radius:20px;" />
                               <br><br>

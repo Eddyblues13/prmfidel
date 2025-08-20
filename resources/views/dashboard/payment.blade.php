@@ -62,7 +62,7 @@
 
         <div class="alert alert-info">
           <strong>Network Type:</strong>
-          @if($item == 'USDT(TRC20)')
+          @if($item == 'TRC20')
           TRC20 Network
           @elseif($item == 'Bitcoin')
           BTC Network
