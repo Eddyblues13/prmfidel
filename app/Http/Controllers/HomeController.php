@@ -328,58 +328,50 @@ class HomeController extends Controller
 
     public function makeDeposit(Request $request)
     {
-
-        // 1. **Validate Incoming Request Data**
+        // ✅ 1. Strict Validation
         $validatedData = $request->validate([
-            'amount' => 'required|numeric|min:1',
-            'payment_method' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Adjust max size as needed
+            'amount' => 'required|numeric|min:1|max:1000000', // put an upper limit
+            'payment_method' => 'required|string|in:Bank,Bitcoin,Ethereum,USDT(Trc20)', // whitelist allowed values
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // 2. **Generate a Unique Transaction ID**
-        // It's better to use a unique identifier to prevent collisions
-        $transaction_id = strtoupper(uniqid('TXN')); // Example: TXN5F2E5C1B8D3A4
+        // ✅ 2. Unique Transaction ID
+        $transaction_id = strtoupper(uniqid('TXN', true)); // stronger uniqueness
 
-        // 3. **Create a New Deposit Record**
+        // ✅ 3. Create Deposit
         $deposit = new Deposit();
-        $deposit->user_id = Auth::id(); // Shortcut for Auth::user()->id
+        $deposit->user_id = Auth::id();
         $deposit->transaction_id = $transaction_id;
         $deposit->amount = $validatedData['amount'];
         $deposit->payment_method = $validatedData['payment_method'];
 
-        // **Clarify 'wallet_id' Assignment**
-        // Assuming 'wallet_id' should correspond to a specific wallet related to the payment method
-        // For example, each payment method might have a predefined wallet ID
-        // If 'payment_method' is a string, you might need to map it to a wallet ID
-        // Here's an example mapping; adjust according to your application's logic
+        // ✅ 4. Map Payment Method to Wallet IDs (strictly defined, no user input)
         $paymentMethodToWallet = [
             'Bank' => 'BANK123456',
             'Bitcoin' => 'BTCWALLET78910',
             'Ethereum' => 'ETHWALLET111213',
             'USDT(Trc20)' => 'USDTWALLET141516',
         ];
-
         $deposit->wallet_id = $paymentMethodToWallet[$validatedData['payment_method']] ?? null;
 
-        // **Handle Image Upload (If Provided)**
+        // ✅ 5. Safe Image Upload (if provided)
         if ($request->hasFile('image')) {
             $file = $request->file('image');
 
-            // Generate a unique filename using timestamp and random string
-            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            // generate unique secure filename
+            $filename = uniqid('deposit_', true) . '.' . $file->getClientOriginalExtension();
 
-            // Store the image in the 'public/uploads/deposits' directory
-            // Ensure that the 'uploads/deposits' directory exists within 'storage/app/public'
-            $file->storeAs('public/uploads/deposits', $filename);
+            // store in storage/app/public/uploads/deposits
+            $path = $file->storeAs('public/uploads/deposits', $filename);
 
-            // Save the filename or the storage path based on your requirements
+            // save relative path (avoid exposing full server path)
             $deposit->image = 'uploads/deposits/' . $filename;
         }
 
-        // **Save the Deposit Record**
+        // ✅ 6. Save Deposit
         $deposit->save();
 
-        // 4. **Create a New Transaction Record**
+        // ✅ 7. Log Transaction (immutable history)
         $transaction = new Transaction();
         $transaction->user_id = Auth::id();
         $transaction->transaction_id = $transaction_id;
@@ -387,29 +379,34 @@ class HomeController extends Controller
         $transaction->transaction = "credit";
         $transaction->credit = $validatedData['amount'];
         $transaction->debit = 0;
-        $transaction->status = 0; // Assuming '0' means pending or under review
+        $transaction->status = 0; // pending
         $transaction->save();
 
-        // 5. **Prepare Data for Email Notifications**
+        // ✅ 8. Notifications
         $user = Auth::user();
-        $full_name = $user->name;
-        $email = $user->email;
-        $payment_method = $validatedData['payment_method'];
-        $amount = $validatedData['amount'];
+        $full_name = e($user->name); // escape output to prevent XSS
+        $email = e($user->email);
+        $payment_method = e($validatedData['payment_method']);
+        $amount = number_format($validatedData['amount'], 2);
 
         $adminNotification = "{$full_name} ({$email}) has made a {$payment_method} deposit of \${$amount}.";
-        $userNotification = "Your \${$amount} {$payment_method} deposit is under review. Please wait for approval from the administrator.";
+        $userNotification = "Your \${$amount} {$payment_method} deposit is under review. Please wait for approval.";
 
-        // 6. **Send Email Notifications (Optional)**
-        // Uncomment the lines below if you have set up the corresponding Mailable classes
+        // If using Mailables, wrap in try/catch
         /*
+    try {
         Mail::to($email)->send(new UserDepositEmail($userNotification));
         Mail::to('support@s9tradingnetwork.com')->send(new MakeDepositEmail($adminNotification));
-        */
-
-        // 7. **Redirect Back with Success Message**
-        return redirect()->route('user.deposit')->with('status', 'Deposit created successfully and is under review.');
+    } catch (\Exception $e) {
+        \Log::error('Deposit email failed: ' . $e->getMessage());
     }
+    */
+
+        // ✅ 9. Redirect
+        return redirect()->route('user.deposit')
+            ->with('status', 'Deposit created successfully and is under review.');
+    }
+
 
 
 
@@ -592,25 +589,35 @@ class HomeController extends Controller
 
     public function uploadKyc(Request $request)
     {
-        // $validate->validate($request,[
-        //     'subject' => 'required',
-        //     'message' => 'required'
-        // ]);
-        $kyc =  Auth::user();
-        $kyc->kyc_status = 0;
+        $user = Auth::user();
+
+        // Validate inputs strictly
+        $request->validate([
+            'card' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // 2MB limit
+            'pass' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048'
+        ]);
+
+        // Store files using Laravel's storage system (not public root)
         $file_id_card = $request->file('card');
         $file_passport = $request->file('pass');
-        $ext_id_card = $file_id_card->getClientOriginalExtension();
-        $ext_passport = $file_passport->getClientOriginalExtension();
-        $filename_id_card = time() . '.' . $ext_id_card;
-        $filename_passport = time() . '.' . $ext_passport;
-        $file_id_card->move('uploads/kyc/', $filename_id_card);
-        $file_passport->move('uploads/kyc/', $filename_passport);
-        $kyc->card =  $filename_id_card;
-        $kyc->pass =  $filename_passport;
-        $kyc->save();
-        return redirect('user/ver-account')->with('status', 'Document updated successfully, please wait for approval');
+
+        $filename_id_card = uniqid('idcard_') . '.' . $file_id_card->getClientOriginalExtension();
+        $filename_passport = uniqid('passport_') . '.' . $file_passport->getClientOriginalExtension();
+
+        // Save in secure storage path (storage/app/kyc), not directly public
+        $path_id_card = $file_id_card->storeAs('kyc', $filename_id_card, 'local');
+        $path_passport = $file_passport->storeAs('kyc', $filename_passport, 'local');
+
+        // Update user record
+        $user->kyc_status = 0;
+        $user->card = $path_id_card;
+        $user->pass = $path_passport;
+        $user->save();
+
+        return redirect('user/ver-account')
+            ->with('status', 'Document updated successfully, please wait for approval');
     }
+
 
 
 
